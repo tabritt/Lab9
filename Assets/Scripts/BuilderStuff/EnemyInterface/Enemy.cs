@@ -1,12 +1,8 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public class Player : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    //injectoranywhere to gameobject the player
-
-    //
     void Start()
     {
         
