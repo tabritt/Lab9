@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
     private InputSystem_Actions inputActions;
 
+
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -35,4 +37,7 @@ public class Player : MonoBehaviour
         Vector2 movement = new Vector2(moveInput.x, 0f);
         rb.linearVelocity = new Vector2(movement.x * moveSpeed, rb.linearVelocity.y);
     }
+
+
+
 }

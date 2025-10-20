@@ -1,6 +1,7 @@
+using NUnit.Framework;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : Subject
 {
     public int health;
     public float speed;
@@ -27,6 +28,7 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(int damage)
     {
         health -= damage;
+        UpdateScore();
         if (health <= 0)
         {
             Die();
