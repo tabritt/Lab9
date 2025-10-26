@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,6 +9,7 @@ public class Player : MonoBehaviour
     private Vector2 moveInput;
     private Rigidbody2D rb;
     private InputSystem_Actions inputActions;
+    private ISaveable[] saveables;
 
 
 
@@ -19,6 +21,40 @@ public class Player : MonoBehaviour
     
         inputActions.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
         inputActions.Player.Move.canceled += ctx => moveInput = Vector2.zero;
+
+        saveables = FindObjectsOfType<MonoBehaviour>(true)
+                   .OfType<ISaveable>()
+                   .ToArray();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            SaveAll();
+        }
+
+        // Press L to load
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            LoadAll();
+        }
+    }
+    public void SaveAll()
+    {
+        foreach (var s in saveables)
+        {
+            s.SaveData();
+            Debug.Log("Saved: " + s.ToString());
+        }
+    }
+    public void LoadAll()
+    {
+        foreach (var s in saveables)
+        {
+            s.LoadData();
+        }
+     
     }
 
     private void OnEnable()
