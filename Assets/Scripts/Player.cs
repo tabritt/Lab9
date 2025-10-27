@@ -1,8 +1,9 @@
 using System.Linq;
+using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour , ISaveable
 {
     public float moveSpeed = 5f;
 
@@ -73,7 +74,31 @@ public class Player : MonoBehaviour
         Vector2 movement = new Vector2(moveInput.x, 0f);
         rb.linearVelocity = new Vector2(movement.x * moveSpeed, rb.linearVelocity.y);
     }
+    public void SaveData()
+    {
+        PlayerSaveTransform saveTransform = new PlayerSaveTransform(transform.position);
+        string json = JsonUtility.ToJson(saveTransform, true); // pretty print = true
 
+        // Save to a file
+        File.WriteAllText(Application.persistentDataPath + "/playerSave.json", json);
+        Debug.Log("Saved JSON: " + json);
+    }
+
+    public void LoadData()
+    {
+        string path = Application.persistentDataPath + "/playerSave.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            PlayerSaveTransform saveTransform = JsonUtility.FromJson<PlayerSaveTransform>(json);
+            transform.position = saveTransform.ToVector2();
+            Debug.Log("Loaded JSON: " + json);
+        }
+        else
+        {
+            Debug.LogWarning("Save file not found!");
+        }
+    }
 
 
 }

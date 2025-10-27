@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
-
-public class Enemy : MonoBehaviour
+using System.IO;
+public class Enemy : MonoBehaviour, ISaveable
 {
     public delegate void ScoreUpdate(int quantity);
     public static event ScoreUpdate onHit;
@@ -47,4 +47,37 @@ public class Enemy : MonoBehaviour
     {
         Destroy(gameObject);
     }
+    public void SaveData()
+    {
+        EnemySaveData data = new EnemySaveData(this);
+        string json = JsonUtility.ToJson(data, true);
+        string path = Application.persistentDataPath + $"/enemy_{gameObject.GetInstanceID()}.json";
+        File.WriteAllText(path, json);
+        
+    }
+
+    public void LoadData()
+    {
+        string path = Application.persistentDataPath + $"/enemy_{gameObject.GetInstanceID()}.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            EnemySaveData data = JsonUtility.FromJson<EnemySaveData>(json);
+            health = data.health;
+            speed = data.speed;
+            transform.position = data.position;
+            
+        }
+      
+    }
+    private void OnEnable()
+    {
+        EnemyManager.Instance?.RegisterEnemy(this);
+    }
+
+    private void OnDisable()
+    {
+        EnemyManager.Instance?.UnregisterEnemy(this);
+    }
+
 }
