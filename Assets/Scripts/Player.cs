@@ -11,7 +11,7 @@ public class Player : MonoBehaviour , ISaveable
     private Rigidbody2D rb;
     private InputSystem_Actions inputActions;
     private ISaveable[] saveables;
-
+    GameStateSave gameStateSave = new GameStateSave();
 
 
     private void Awake()
@@ -32,12 +32,22 @@ public class Player : MonoBehaviour , ISaveable
     {
         if (Input.GetKeyDown(KeyCode.K))
         {
+            gameStateSave.position = transform.position;
+            gameStateSave.rotation = transform.rotation;
+            gameStateSave.scale = transform.localScale;
+            string json = JsonUtility.ToJson(gameStateSave, true);
+            System.IO.File.WriteAllText(System.IO.Path.Combine(Application.persistentDataPath, "game_save.json"), json);
             SaveAll();
         }
 
         // Press L to load
         if (Input.GetKeyDown(KeyCode.L))
         {
+            string json = System.IO.File.ReadAllText(System.IO.Path.Combine(Application.persistentDataPath, "game_save.json"));
+            GameStateSave loadedGameState = JsonUtility.FromJson<GameStateSave>(json);
+            transform.position = loadedGameState.position;
+            transform.rotation = loadedGameState.rotation;
+            transform.localScale = loadedGameState.scale;
             LoadAll();
         }
     }
